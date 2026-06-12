@@ -6,8 +6,9 @@
 
 using namespace std;
 
-void markAttendance(const string& rollNo, const string& courseCode, const string& status);
-double calculateAttendancePercentage(const string& rollNo, const string& courseCode);
-void generateAttendanceReport(const string& courseCode);
+
+void markAttendance(const string& logId, const string& enrollId, const string& date, const string& status);
+double calculateAttendancePercentage(const string& enrollId);
+void generateAttendanceReport(const string& enrollId);
 
 #endif
