@@ -6,9 +6,9 @@
 
 using namespace std;
 
-// M3: Analytics Core Functions Declarations
-double calculateCourseAverage(const string& courseCode);
-void findCourseTopper(const string& courseCode);
-void printPerformanceReport(const string& courseCode);
+// Updated declarations with CourseID
+double calculateCourseAverage(const string& courseId);
+void findCourseTopper(const string& courseId);
+void printPerformanceReport(const string& courseId);
 
 #endif
