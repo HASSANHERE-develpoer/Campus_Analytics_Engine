@@ -6,16 +6,15 @@
 
 using namespace std;
 
-// Login check karne ka function
-bool loginUser(const string& email, const string& password, string& loggedInId, string& role) {
-    // 1. Pehle Admin credentials check karo (Hardcoded as per requirement)
-    if (email == "admin@umt.edu.pk" && password == "admin123") {
+bool loginUser(const string& username, const string& password, string& loggedInId, string& role) {
+    // 1. Admin Login (As per requirement)
+    if (username == "admin" && password == "admin123") {
         loggedInId = "ADMIN";
         role = "admin";
         return true;
     }
 
-    // 2. Agar admin nahi hai, toh students.txt file check karo
+    // 2. Student Login: students.txt se check karo ke Roll No exist karta hai ya nahi
     ifstream file("students.txt");
     if (!file.is_open()) {
         cout << "Error: Could not open students.txt file!" << endl;
@@ -23,25 +22,29 @@ bool loginUser(const string& email, const string& password, string& loggedInId, 
     }
 
     string line;
-    getline(file, line); // Header line skip ki
+    getline(file, line); // Header skip ki
 
     while (getline(file, line)) {
         if (line == "") continue;
 
-        //  file ke columns: StudentID, Name, Age, Email, Password, Department
-        string currentId = getColumnValue(line, 0);
-        string currentEmail = getColumnValue(line, 3);
-        string currentPassword = getColumnValue(line, 4);
+        // students.txt columns: roll_no(0), name(1), department(2), status(5)
+        string currentRollNo = getColumnValue(line, 0);
+        string status = getColumnValue(line, 5);
 
-        // Agar email aur password dono match ho jayein
-        if (currentEmail == email && currentPassword == password) {
-            loggedInId = currentId; // Bache ki ID save kar li (taake baad me kaam aaye)
-            role = "student";       // Role student set kar diya
+        // Agar bacha apna Roll No sahi daalta hai aur password me bhi Roll No daalta hai
+        if (currentRollNo == username && currentRollNo == password) {
+            if (status == "inactive") {
+                cout << "Access Denied: Your student account is inactive." << endl;
+                file.close();
+                return false;
+            }
+            loggedInId = currentRollNo; // Roll No save kar liya
+            role = "student";
             file.close();
             return true;
         }
     }
 
     file.close();
-    return false; // Agar kuch match na hua toh login fail
+    return false; // Login Failed
 }
