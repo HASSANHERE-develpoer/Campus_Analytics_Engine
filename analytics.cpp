@@ -6,74 +6,102 @@
 
 using namespace std;
 
-// 1. Course Average Marks: enrollments.txt se kisi CourseID ka average nikalna
-double calculateCourseAverage(const string& courseId) {
-    ifstream file("enrollments.txt");
+// 1. Course Average Attendance: attendance_log.txt se poori class ki average attendance nikalna
+double calculateCourseAverage(const string& courseCode) {
+    ifstream file("attendance_log.txt");
     if (!file.is_open()) return 0.0;
 
     string line;
-    double totalMarks = 0.0;
-    int studentCount = 0;
-
-    getline(file, line); // Header skip kiya
-
-    while (getline(file, line)) {
-        if (line == "") continue;
-
-        //  Column 2 is CourseID, Column 3 is Marks
-        string currentCourseId = getColumnValue(line, 2); 
-        if (currentCourseId == courseId) {
-            string marksStr = getColumnValue(line, 3); // Marks
-            totalMarks += stod(marksStr);
-            studentCount++;
-        }
-    }
-    file.close();
-
-    if (studentCount == 0) return 0.0;
-    return totalMarks / studentCount;
-}
-
-// 2. Class Ka Topper: enrollments.txt me se highest marks wala StudentID dhoondna
-void findCourseTopper(const string& courseId) {
-    ifstream file("enrollments.txt");
-    if (!file.is_open()) return;
-
-    string line;
-    double highestMarks = -1.0;
-    string topperStudentId = "N/A";
+    int totalSessions = 0;
+    int totalPresents = 0;
 
     getline(file, line); // Header skip
 
     while (getline(file, line)) {
         if (line == "") continue;
 
-        string currentCourseId = getColumnValue(line, 2);
-        if (currentCourseId == courseId) {
-            string studentId = getColumnValue(line, 1); // StudentID
-            double currentMarks = stod(getColumnValue(line, 3)); // Marks
-
-            if (currentMarks > highestMarks) {
-                highestMarks = currentMarks;
-                topperStudentId = studentId;
+        // attendance_log.txt columns: log_id(0), roll_no(1), course_code(2), status(4)
+        string currentCourse = getColumnValue(line, 2);
+        if (currentCourse == courseCode) {
+            totalSessions++;
+            string status = getColumnValue(line, 4);
+            if (status == "P" || status == "p" || status == "Present") {
+                totalPresents++;
             }
         }
     }
     file.close();
 
-    cout << "\n--- Course Topper for " << courseId << " ---" << endl;
-    cout << "Student ID: " << topperStudentId << " | Highest Marks: " << highestMarks << endl;
+    if (totalSessions == 0) return 0.0;
+    return ((double)totalPresents / totalSessions) * 100.0;
 }
 
-// 3. Performance Summary Print Karna
-void printPerformanceReport(const string& courseId) {
-    double avg = calculateCourseAverage(courseId);
+// 2. Class Topper: Kisi course me sab se zyada Present hone wala Roll No dhoondna
+void findCourseTopper(const string& courseCode) {
+    ifstream file("attendance_log.txt");
+    if (!file.is_open()) return;
+
+    string line;
+    // Basic structural tracking arrays (No STL allowed)
+    string students[100];
+    int presents[100] = {0};
+    int studentCount = 0;
+
+    getline(file, line); // Header skip
+
+    while (getline(file, line)) {
+        if (line == "") continue;
+
+        string currentCourse = getColumnValue(line, 2);
+        if (currentCourse == courseCode) {
+            string rollNo = getColumnValue(line, 1);
+            string status = getColumnValue(line, 4);
+
+            // Check karo agar student pehle se array me hai
+            int foundIndex = -1;
+            for (int i = 0; i < studentCount; i++) {
+                if (students[i] == rollNo) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            // Agar naya student hai toh array me add karo
+            if (foundIndex == -1) {
+                foundIndex = studentCount;
+                students[studentCount] = rollNo;
+                studentCount++;
+            }
+
+            if (status == "P" || status == "p" || status == "Present") {
+                presents[foundIndex]++;
+            }
+        }
+    }
+    file.close();
+
+    // Highest presence dhoondna
+    int maxPresents = -1;
+    string topperRoll = "N/A";
+    for (int i = 0; i < studentCount; i++) {
+        if (presents[i] > maxPresents) {
+            maxPresents = presents[i];
+            topperRoll = students[i];
+        }
+    }
+
+    cout << "\n--- Course Performance Topper (" << courseCode << ") ---" << endl;
+    cout << "Top Active Student (Roll No): " << topperRoll << " | Total Classes Attended: " << maxPresents << endl;
+}
+
+void printPerformanceReport(const string& courseCode) {
+    double avgAttendance = calculateCourseAverage(courseCode);
     
     cout << "\n=========================================" << endl;
-    cout << "        PERFORMANCE ANALYTICS: " << courseId << endl;
+    cout << "       ATTENDANCE ANALYTICS: " << courseCode << endl;
     cout << "=========================================" << endl;
-    cout << "Class Average Marks: " << avg << endl;
+    cout << "Overall Class Average Attendance: " << avgAttendance << "%" << endl;
     
-    findCourseTopper(courseId);
+    findCourseTopper(courseCode);
     cout << "=========================================" << endl;
 }
