@@ -8,7 +8,7 @@ using namespace std;
 
 // 1. Naya Course Add Karna (Admin Function)
 void addCourse() {
-    ofstream file("courses.txt", ios::app); // Append mode
+    ofstream file("courses.txt", ios::app); // Append mode taake purana data urray na
     if (!file.is_open()) {
         cout << "Error: Could not open courses.txt!" << endl;
         return;
@@ -19,16 +19,19 @@ void addCourse() {
     cout << "\n--- ADD NEW CAMPUS COURSE ---" << endl;
     cout << "Enter Course Code (e.g., CS-101): ";
     cin >> courseCode;
-    cin.ignore(); // Buffer clear
+    cin.ignore(); // Buffer clear taake getline smoothly chale
+    
     cout << "Enter Course Name: ";
     getline(cin, courseName);
+    
     cout << "Enter Credit Hours: ";
     cin >> creditHours;
-    cin.ignore();
+    cin.ignore(); // Buffer clear
+    
     cout << "Enter Offering Department: ";
     getline(cin, dept);
 
-    // Comma-separated line save karo
+    // Standard Comma-separated line save karo
     file << courseCode << "," << courseName << "," << creditHours << "," << dept << "\n";
     file.close();
 
@@ -47,6 +50,8 @@ void viewCourseCatalog() {
     cout << "\n=================================================================" << endl;
     cout << "                    OFFICIAL COURSE CATALOG                      " << endl;
     cout << "=================================================================" << endl;
+    cout << "Sr.\tCode\t\tCredit Hours\tCourse Name [Department]" << endl;
+    cout << "-----------------------------------------------------------------" << endl;
     
     getline(file, line); // Header skip
     
@@ -56,10 +61,13 @@ void viewCourseCatalog() {
 
         count++;
         // columns: course_code(0), course_name(1), credit_hours(2), department(3)
-        cout << count << ". Code: " << getColumnValue(line, 0)
-             << " | Name: " << getColumnValue(line, 1)
-             << " | Cr. Hrs: " << getColumnValue(line, 2)
-             << " | Dept: " << getColumnValue(line, 3) << endl;
+        string code = getColumnValue(line, 0);
+        string name = getColumnValue(line, 1);
+        string hrs = getColumnValue(line, 2);
+        string dpt = getColumnValue(line, 3);
+
+        // Tabular and neat output display
+        cout << count << ".\t" << code << "\t\t" << hrs << "\t\t" << name << " [" << dpt << "]" << endl;
     }
     file.close();
 
