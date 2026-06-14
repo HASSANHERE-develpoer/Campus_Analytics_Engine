@@ -6,45 +6,43 @@
 
 using namespace std;
 
-bool loginUser(const string& username, const string& password, string& loggedInId, string& role) {
-    // 1. Admin Login (As per requirement)
+// Function ka naam aur return type main.cpp ke mutabiq strictly match kar di hai
+string login(const string& username, const string& password) {
+    
+    // 1. Admin Login Check (Hardcoded as per requirement)
     if (username == "admin" && password == "admin123") {
-        loggedInId = "ADMIN";
-        role = "admin";
-        return true;
+        return "admin";
     }
 
-    // 2. Student Login: students.txt se check karo ke Roll No exist karta hai ya nahi
+    // 2. Student Login Check: students.txt se data verify karo
     ifstream file("students.txt");
     if (!file.is_open()) {
         cout << "Error: Could not open students.txt file!" << endl;
-        return false;
+        return "invalid";
     }
 
     string line;
-    getline(file, line); // Header skip ki
+    getline(file, line); // Header line skip ki
 
     while (getline(file, line)) {
         if (line == "") continue;
 
-        // students.txt columns: roll_no(0), name(1), department(2), status(5)
+        // columns: roll_no(0), name(1), department(2), semester(3), cgpa(4), status(5)
         string currentRollNo = getColumnValue(line, 0);
         string status = getColumnValue(line, 5);
 
-        // Agar bacha apna Roll No sahi daalta hai aur password me bhi Roll No daalta hai
+        // Standard Default Rule: Student ka Roll No hi uska password hai
         if (currentRollNo == username && currentRollNo == password) {
-            if (status == "inactive") {
-                cout << "Access Denied: Your student account is inactive." << endl;
+            if (status == "inactive" || status == "Inactive") {
+                cout << "\nAccess Denied: Your student account is inactive!" << endl;
                 file.close();
-                return false;
+                return "invalid";
             }
-            loggedInId = currentRollNo; // Roll No save kar liya
-            role = "student";
             file.close();
-            return true;
+            return "student"; // Seedha student role return karo
         }
     }
 
     file.close();
-    return false; // Login Failed
+    return "invalid"; // Agar kuch match na ho toh login fail
 }
