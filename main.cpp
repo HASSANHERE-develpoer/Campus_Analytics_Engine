@@ -13,15 +13,26 @@ void showAdminMenu() {
     int choice;
     do {
         cout << "\n=== ADMIN DASHBOARD ===" << endl;
-        cout << "1. View Total Revenue" << endl;
-        cout << "2. View System Analytics" << endl;
-        cout << "3. Logout" << endl;
+        cout << "1. Add New Student" << endl;
+        cout << "2. Add New Course" << endl;
+        cout << "3. View Course Catalog" << endl;
+        cout << "4. View Total Revenue" << endl;
+        cout << "5. View Course Attendance Analytics" << endl;
+        cout << "6. Logout" << endl;
         cout << "Enter choice: ";
         cin >> choice;
 
-        if (choice == 1) calculateTotalRevenue();
-        else if (choice == 2) cout << "\n[Feature coming soon in Next Sprint]" << endl;
-    } while (choice != 3);
+        if (choice == 1) addStudent();
+        else if (choice == 2) addCourse();
+        else if (choice == 3) viewCourseCatalog();
+        else if (choice == 4) calculateTotalRevenue();
+        else if (choice == 5) {
+            string cCode;
+            cout << "Enter Course Code for Analytics (e.g., CS-101): ";
+            cin >> cCode;
+            printPerformanceReport(cCode);
+        }
+    } while (choice != 6);
 }
 
 void showStudentMenu(const string& rollNo) {
