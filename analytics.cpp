@@ -15,17 +15,18 @@ double calculateCourseAverage(const string& courseCode) {
     int totalSessions = 0;
     int totalPresents = 0;
 
-    getline(file, line); // Header skip
+    getline(file, line); // Header line skip ki
 
     while (getline(file, line)) {
         if (line == "") continue;
 
-        // attendance_log.txt columns: log_id(0), roll_no(1), course_code(2), status(4)
-        string currentCourse = getColumnValue(line, 2);
+        // Corrected Column Indexes according to attendance.cpp:
+        // RollNo(0), CourseCode(1), Date(2), Status(3)
+        string currentCourse = getColumnValue(line, 1);
         if (currentCourse == courseCode) {
             totalSessions++;
-            string status = getColumnValue(line, 4);
-            if (status == "P" || status == "p" || status == "Present") {
+            string status = getColumnValue(line, 3);
+            if (status == "P" || status == "p" || status == "Present" || status == "present") {
                 totalPresents++;
             }
         }
@@ -42,7 +43,7 @@ void findCourseTopper(const string& courseCode) {
     if (!file.is_open()) return;
 
     string line;
-    // Basic structural tracking arrays (No STL allowed)
+    // Structural parallel arrays for tracking (Strictly no vectors/OOP)
     string students[100];
     int presents[100] = {0};
     int studentCount = 0;
@@ -52,10 +53,11 @@ void findCourseTopper(const string& courseCode) {
     while (getline(file, line)) {
         if (line == "") continue;
 
-        string currentCourse = getColumnValue(line, 2);
+        // Corrected Indexes: CourseCode is 1, RollNo is 0, Status is 3
+        string currentCourse = getColumnValue(line, 1);
         if (currentCourse == courseCode) {
-            string rollNo = getColumnValue(line, 1);
-            string status = getColumnValue(line, 4);
+            string rollNo = getColumnValue(line, 0);
+            string status = getColumnValue(line, 3);
 
             // Check karo agar student pehle se array me hai
             int foundIndex = -1;
@@ -66,21 +68,24 @@ void findCourseTopper(const string& courseCode) {
                 }
             }
 
-            // Agar naya student hai toh array me add karo
-            if (foundIndex == -1) {
+            // Agar naya student hai aur arrays me space hai toh add karo
+            if (foundIndex == -1 && studentCount < 100) {
                 foundIndex = studentCount;
                 students[studentCount] = rollNo;
                 studentCount++;
             }
 
-            if (status == "P" || status == "p" || status == "Present") {
-                presents[foundIndex]++;
+            // Agar student safely track ho raha hai toh uski presence plus karo
+            if (foundIndex != -1) {
+                if (status == "P" || status == "p" || status == "Present" || status == "present") {
+                    presents[foundIndex]++;
+                }
             }
         }
     }
     file.close();
 
-    // Highest presence dhoondna
+    // Highest presence calculate karna
     int maxPresents = -1;
     string topperRoll = "N/A";
     for (int i = 0; i < studentCount; i++) {
