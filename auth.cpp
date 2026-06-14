@@ -6,18 +6,16 @@
 
 using namespace std;
 
-// Function ka naam aur return type main.cpp ke mutabiq strictly match kar di hai
 string login(const string& username, const string& password) {
-    
-    // 1. Admin Login Check (Hardcoded as per requirement)
+    // 1. Direct Admin Check (Hardcoded)
     if (username == "admin" && password == "admin123") {
         return "admin";
     }
 
-    // 2. Student Login Check: students.txt se data verify karo
+    // 2. Student Check via Text File
     ifstream file("students.txt");
     if (!file.is_open()) {
-        cout << "Error: Could not open students.txt file!" << endl;
+        // Agar file nahi milti toh loop me phasne ke bajaye invalid return kare
         return "invalid";
     }
 
@@ -31,7 +29,6 @@ string login(const string& username, const string& password) {
         string currentRollNo = getColumnValue(line, 0);
         string status = getColumnValue(line, 5);
 
-        // Standard Default Rule: Student ka Roll No hi uska password hai
         if (currentRollNo == username && currentRollNo == password) {
             if (status == "inactive" || status == "Inactive") {
                 cout << "\nAccess Denied: Your student account is inactive!" << endl;
@@ -39,10 +36,10 @@ string login(const string& username, const string& password) {
                 return "invalid";
             }
             file.close();
-            return "student"; // Seedha student role return karo
+            return "student";
         }
     }
 
     file.close();
-    return "invalid"; // Agar kuch match na ho toh login fail
+    return "invalid";
 }
