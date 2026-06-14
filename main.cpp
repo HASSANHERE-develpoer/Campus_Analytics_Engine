@@ -21,6 +21,7 @@ void showAdminMenu() {
         cout << "6. Logout" << endl;
         cout << "Enter choice: ";
         cin >> choice;
+        cin.ignore(); // Buffer clear
 
         if (choice == 1) addStudent();
         else if (choice == 2) addCourse();
@@ -30,6 +31,7 @@ void showAdminMenu() {
             string cCode;
             cout << "Enter Course Code for Analytics (e.g., CS-101): ";
             cin >> cCode;
+            cin.ignore(); // Buffer clear
             printPerformanceReport(cCode);
         }
     } while (choice != 6);
@@ -46,6 +48,7 @@ void showStudentMenu(const string& rollNo) {
         cout << "5. Logout" << endl;
         cout << "Enter choice: ";
         cin >> choice;
+        cin.ignore(); // Buffer clear
 
         if (choice == 1) displayStudentProfile(rollNo);
         else if (choice == 2) viewAttendanceReport(rollNo);
@@ -54,6 +57,7 @@ void showStudentMenu(const string& rollNo) {
             double amt;
             cout << "Enter Amount to Pay: Rs. ";
             cin >> amt;
+            cin.ignore(); // Buffer clear
             payFee(rollNo, amt);
         }
     } while (choice != 5);
@@ -69,6 +73,7 @@ int main() {
         cout << "2. Exit System" << endl;
         cout << "Enter option: ";
         cin >> choice;
+        cin.ignore(); // ✨ YEH BUFFER CLEAR KAREGA TA_KE LOGIN PAR PHASSE NA!
 
         if (choice == 1) {
             string user, pass;
@@ -76,6 +81,7 @@ int main() {
             cin >> user;
             cout << "Enter Password: ";
             cin >> pass;
+            cin.ignore(); // Buffer clear
 
             string role = login(user, pass);
             if (role == "admin") {
