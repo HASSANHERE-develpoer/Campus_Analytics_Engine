@@ -19,18 +19,23 @@ void addStudent() {
     cout << "\n--- ADD NEW STUDENT ---" << endl;
     cout << "Enter Roll No (e.g., AI-01): ";
     cin >> rollNo;
-    cin.ignore(); // Buffer clear karne ke liye
+    cin.ignore(); // Buffer clear karne ke liye taake getline bypass na ho
+    
     cout << "Enter Full Name: ";
     getline(cin, name);
+    
     cout << "Enter Department: ";
     getline(cin, dept);
+    
     cout << "Enter Semester: ";
     cin >> sem;
+    
     cout << "Enter Current CGPA: ";
     cin >> cgpa;
+    
     status = "active"; // Naya student hamesha active hoga
 
-    // Comma-separated format me save karo
+    // Comma-separated standard format me save karo
     file << rollNo << "," << name << "," << dept << "," << sem << "," << cgpa << "," << status << "\n";
     file.close();
 
@@ -46,28 +51,32 @@ void displayStudentProfile(const string& rollNo) {
     }
 
     string line;
-    getline(file, line); // Header skip
+    getline(file, line); // Header line skip karne ke liye
 
+    bool found = false;
     while (getline(file, line)) {
         if (line == "") continue;
 
         // columns: roll_no(0), name(1), department(2), semester(3), cgpa(4), status(5)
         string currentRollNo = getColumnValue(line, 0);
         if (currentRollNo == rollNo) {
+            found = true;
             cout << "\n=========================================" << endl;
             cout << "            STUDENT PROFILE              " << endl;
             cout << "=========================================" << endl;
-            cout << "Roll Number:  " << getColumnValue(line, 0) << endl;
-            cout << "Full Name:    " << getColumnValue(line, 1) << endl;
-            cout << "Department:   " << getColumnValue(line, 2) << endl;
-            cout << "Semester:     " << getColumnValue(line, 3) << endl;
-            cout << "Current CGPA: " << getColumnValue(line, 4) << endl;
+            cout << "Roll Number:    " << currentRollNo << endl;
+            cout << "Full Name:      " << getColumnValue(line, 1) << endl;
+            cout << "Department:     " << getColumnValue(line, 2) << endl;
+            cout << "Semester:       " << getColumnValue(line, 3) << endl;
+            cout << "Current CGPA:   " << getColumnValue(line, 4) << endl;
             cout << "Account Status: " << getColumnValue(line, 5) << endl;
             cout << "=========================================" << endl;
-            file.close();
-            return;
+            break; // Record mil gaya, loop se baahir aao
         }
     }
-    file.close();
-    cout << "Student with Roll No " << rollNo << " not found!" << endl;
+    file.close(); // Clean exit
+    
+    if (!found) {
+        cout << "\nStudent with Roll No " << rollNo << " not found!" << endl;
+    }
 }
