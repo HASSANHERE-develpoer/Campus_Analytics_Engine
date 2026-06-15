@@ -1,6 +1,5 @@
-#ifndef COURSE_OPS_H
-#define COURSE_OPS_H
-
+#ifndef COURSE_H
+#define COURSE_H
 #include <string>
 using namespace std;
 
