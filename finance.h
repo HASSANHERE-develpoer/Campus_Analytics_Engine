@@ -1,14 +1,14 @@
-#ifndef FINANCE_H
-#define FINANCE_H
+#ifndef FEE_TRACKER_H
+#define FEE_TRACKER_H
 
-#include <iostream>
 #include <string>
-
 using namespace std;
 
-// Module 6: Financial Management Functions (As per real fees.txt)
-void viewFeeStatus(const string& rollNo);
-void payFee(const string& rollNo, double amount);
-void calculateTotalRevenue();
+void recordPayment();
+int daysBetween(const string& date1, const string& date2);
+double computeLateFine(const string& dueDate, const string& paidDate, double baseAmount);
+void generateReceipt();
+void getDefaulters();
+bool isLeapYear(int year);
 
 #endif
