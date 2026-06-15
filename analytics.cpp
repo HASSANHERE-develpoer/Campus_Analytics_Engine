@@ -84,9 +84,15 @@ void findCourseTopper(const string& courseCode) {
         }
     }
     file.close();
+    if (studentCount == 0)
+{
+    cout << "\nNo attendance data found for course "
+         << courseCode << endl;
+    return;
+}
 
     // Highest presence calculate karna
-    int maxPresents = -1;
+    int maxPresents = 0;
     string topperRoll = "N/A";
     for (int i = 0; i < studentCount; i++) {
         if (presents[i] > maxPresents) {
