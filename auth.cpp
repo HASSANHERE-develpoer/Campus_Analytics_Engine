@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include "auth.h"
-#include "student_ops.h"
+#include "student.h"   
 #include "attendance.h"
 #include "filehandler.h"
 
