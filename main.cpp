@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
 #include "filehandler.h"
-#include "student_ops.h"
-#include "course_ops.h"
+#include "student.h"    
+#include "course.h"   
 #include "attendance.h"
 #include "auth.h"
-#include "fee_tracker.h"
-#include "reports.h"
+#include "finance.h"    
+#include "analytics.h"
 
 using namespace std;
 void displayMainMenu();
