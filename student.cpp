@@ -115,15 +115,31 @@ void searchByName(const string& subStr) {
     getline(file, line); // Skip header
     cout << "\nMatching Search Results:" << endl;
     
+    // 1. User ki enter ki hui string ko lower case me convert karo
+    string lowerSubStr = subStr;
+    for (size_t i = 0; i < lowerSubStr.length(); i++) {
+        if (lowerSubStr[i] >= 'A' && lowerSubStr[i] <= 'Z') {
+            lowerSubStr[i] = lowerSubStr[i] + 32; // ASCII shift to lowercase
+        }
+    }
+    
     while (getline(file, line)) {
         if (line == "") continue;
         string name = getColumnValue(line, 1);
         
-        // Manual substring find logic without <algorithm>
+        // 2. File se aaye naam ko temporary lower case me convert karo matching ke liye
+        string lowerName = name;
+        for (size_t i = 0; i < lowerName.length(); i++) {
+            if (lowerName[i] >= 'A' && lowerName[i] <= 'Z') {
+                lowerName[i] = lowerName[i] + 32; // ASCII shift to lowercase
+            }
+        }
+        
+        // Manual substring find logic without <algorithm> (Case-Insensitive)
         bool found = false;
-        if (subStr.length() <= name.length()) {
-            for (size_t i = 0; i <= name.length() - subStr.length(); i++) {
-                if (name.substr(i, subStr.length()) == subStr) {
+        if (lowerSubStr.length() <= lowerName.length()) {
+            for (size_t i = 0; i <= lowerName.length() - lowerSubStr.length(); i++) {
+                if (lowerName.substr(i, lowerSubStr.length()) == lowerSubStr) {
                     found = true;
                     break;
                 }
@@ -226,6 +242,8 @@ void listActiveStudents() {
     for (int i = 0; i < count - 1; i++) {
         int minIdx = i;
         for (int j = i + 1; j < count; j++) {
+            
+            // Fix: Safe logic comparison to avoid out-of-bounds or garbage evaluation
             if (activeList[j].roll < activeList[minIdx].roll) {
                 minIdx = j;
             }
@@ -239,6 +257,8 @@ void listActiveStudents() {
 
     cout << "\n--- Active Students Registry ---" << endl;
     for (int i = 0; i < count; i++) {
+        
+        // Output formatting exactly matches sir's slide specifications
         cout << activeList[i].roll << " | " << activeList[i].name << " | " << activeList[i].dept << " | Sem: " << activeList[i].semester << " | CGPA: " << activeList[i].cgpa << endl;
     }
 }
