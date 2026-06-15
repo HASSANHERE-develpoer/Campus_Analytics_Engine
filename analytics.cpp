@@ -1,118 +1,155 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "analytics.h"
+#include <iomanip>
+#include "reports.h"
+#include "student_ops.h"
 #include "filehandler.h"
 
 using namespace std;
 
-// 1. Course Average Attendance: attendance_log.txt se poori class ki average attendance nikalna
-double calculateCourseAverage(const string& courseCode) {
-    ifstream file("attendance_log.txt");
-    if (!file.is_open()) return 0.0;
-
-    string line;
-    int totalSessions = 0;
-    int totalPresents = 0;
-
-    getline(file, line); // Header line skip ki
-
-    while (getline(file, line)) {
-        if (line == "") continue;
-
-        // Corrected Column Indexes according to attendance.cpp:
-        // RollNo(0), CourseCode(1), Date(2), Status(3)
-        string currentCourse = getColumnValue(line, 1);
-        if (currentCourse == courseCode) {
-            totalSessions++;
-            string status = getColumnValue(line, 3);
-            if (status == "P" || status == "p" || status == "Present" || status == "present") {
-                totalPresents++;
-            }
-        }
-    }
-    file.close();
-
-    if (totalSessions == 0) return 0.0;
-    return ((double)totalPresents / totalSessions) * 100.0;
-}
-
-// 2. Class Topper: Kisi course me sab se zyada Present hone wala Roll No dhoondna
-void findCourseTopper(const string& courseCode) {
-    ifstream file("attendance_log.txt");
+// 1. Department Summary Report: Average CGPA and Headcount
+void generateDepartmentSummary() {
+    ifstream file("students.txt");
     if (!file.is_open()) return;
 
     string line;
-    // Structural parallel arrays for tracking (Strictly no vectors/OOP)
-    string students[100];
-    int presents[100] = {0};
-    int studentCount = 0;
-
     getline(file, line); // Header skip
+
+    string depts[50];
+    double gpaSums[50] = {0};
+    int counts[50] = {0};
+    int distinctDepts = 0;
 
     while (getline(file, line)) {
         if (line == "") continue;
+        if (getColumnValue(line, 5) != "active") continue;
 
-        // Corrected Indexes: CourseCode is 1, RollNo is 0, Status is 3
-        string currentCourse = getColumnValue(line, 1);
-        if (currentCourse == courseCode) {
-            string rollNo = getColumnValue(line, 0);
-            string status = getColumnValue(line, 3);
+        string dName = getColumnValue(line, 2);
+        double cgpa = stod(getColumnValue(line, 4));
 
-            // Check karo agar student pehle se array me hai
-            int foundIndex = -1;
-            for (int i = 0; i < studentCount; i++) {
-                if (students[i] == rollNo) {
-                    foundIndex = i;
-                    break;
-                }
+        // Manual search if department already indexed
+        int foundIdx = -1;
+        for (int i = 0; i < distinctDepts; i++) {
+            if (depts[i] == dName) {
+                foundIdx = i;
+                break;
             }
+        }
 
-            // Agar naya student hai aur arrays me space hai toh add karo
-            if (foundIndex == -1 && studentCount < 100) {
-                foundIndex = studentCount;
-                students[studentCount] = rollNo;
-                studentCount++;
-            }
-
-            // Agar student safely track ho raha hai toh uski presence plus karo
-            if (foundIndex != -1) {
-                if (status == "P" || status == "p" || status == "Present" || status == "present") {
-                    presents[foundIndex]++;
-                }
-            }
+        if (foundIdx != -1) {
+            gpaSums[foundIdx] += cgpa;
+            counts[foundIdx]++;
+        } else if (distinctDepts < 50) {
+            depts[distinctDepts] = dName;
+            gpaSums[distinctDepts] = cgpa;
+            counts[distinctDepts] = 1;
+            distinctDepts++;
         }
     }
     file.close();
-    if (studentCount == 0)
-{
-    cout << "\nNo attendance data found for course "
-         << courseCode << endl;
-    return;
+
+    cout << "\n=====================================================" << endl;
+    cout << "          INSTITUTIONAL DEPARTMENTAL SUMMARY         " << endl;
+    cout << "=====================================================" << endl;
+    cout << left << setw(25) << "Department Name" << setw(15) << "Total Students" << setw(15) << "Average CGPA" << endl;
+    cout << "-----------------------------------------------------" << endl;
+
+    for (int i = 0; i < distinctDepts; i++) {
+        double avgGpa = gpaSums[i] / counts[i];
+        cout << left << setw(25) << depts[i] 
+             << setw(15) << counts[i] 
+             << setw(15) << fixed << setprecision(2) << avgGpa << endl;
+    }
+    cout << "=====================================================" << endl;
 }
 
-    // Highest presence calculate karna
-    int maxPresents = 0;
-    string topperRoll = "N/A";
-    for (int i = 0; i < studentCount; i++) {
-        if (presents[i] > maxPresents) {
-            maxPresents = presents[i];
-            topperRoll = students[i];
+// 2. Merit List Top Students (Sorted by CGPA using Bubble Sort)
+void generateMeritList() {
+    Student activeList[200];
+    int count = 0;
+
+    ifstream file("students.txt");
+    if (!file.is_open()) return;
+
+    string line;
+    getline(file, line);
+
+    while (getline(file, line) && count < 200) {
+        if (line == "") continue;
+        if (getColumnValue(line, 5) == "active") {
+            activeList[count].roll = getColumnValue(line, 0);
+            activeList[count].name = getColumnValue(line, 1);
+            activeList[count].dept = getColumnValue(line, 2);
+            activeList[count].semester = getColumnValue(line, 3);
+            activeList[count].cgpa = stod(getColumnValue(line, 4));
+            count++;
+        }
+    }
+    file.close();
+
+    if (count == 0) {
+        cout << "No active student entries available to evaluate merit." << endl;
+        return;
+    }
+
+    // Bubble Sort by CGPA Descending
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (activeList[j].cgpa < activeList[j + 1].cgpa) {
+                Student temp = activeList[j];
+                activeList[j] = activeList[j + 1];
+                activeList[j + 1] = temp;
+            }
         }
     }
 
-    cout << "\n--- Course Performance Topper (" << courseCode << ") ---" << endl;
-    cout << "Top Active Student (Roll No): " << topperRoll << " | Total Classes Attended: " << maxPresents << endl;
+    cout << "\n====================================================================" << endl;
+    cout << "                       CAMPUS MERIT LOG (TOP 10)                    " << endl;
+    cout << "====================================================================" << endl;
+    cout << left << setw(5) << "Pos" << setw(15) << "Roll No" << setw(25) << "Student Name" << setw(10) << "CGPA" << endl;
+    cout << "--------------------------------------------------------------------" << endl;
+
+    int limit = (count < 10) ? count : 10;
+    for (int i = 0; i < limit; i++) {
+        cout << left << setw(5) << (i + 1) 
+             << setw(15) << activeList[i].roll 
+             << setw(25) << activeList[i].name 
+             << setw(10) << fixed << setprecision(2) << activeList[i].cgpa << endl;
+    }
+    cout << "====================================================================" << endl;
 }
 
-void printPerformanceReport(const string& courseCode) {
-    double avgAttendance = calculateCourseAverage(courseCode);
-    
-    cout << "\n=========================================" << endl;
-    cout << "       ATTENDANCE ANALYTICS: " << courseCode << endl;
-    cout << "=========================================" << endl;
-    cout << "Overall Class Average Attendance: " << avgAttendance << "%" << endl;
-    
-    findCourseTopper(courseCode);
-    cout << "=========================================" << endl;
+// 3. Export System Audit Metrics to external text file
+void exportSystemStatus() {
+    ofstream out("system_export_report.txt");
+    if (!out.is_open()) {
+        cout << "Error creating export file asset." << endl;
+        return;
+    }
+
+    out << "CAMPUS ANALYTICS ENGINE - DATA SUMMARY EXPORT\n";
+    out << "Generated Security Timestamp Checkpoint context\n";
+    out << "-----------------------------------------------------\n";
+
+    // Count lines manually across registry assets
+    string logs[] = {"students.txt", "courses.txt", "enrollments.txt", "attendance_log.txt", "fees.txt"};
+    string titles[] = {"Total Registered Student Rows: ", "Total Loaded Course Assets: ", "Total Enrollment Mappings: ", "Total Attendance Logs Filed: ", "Total Financial Ledgers: "};
+
+    for (int i = 0; i < 5; i++) {
+        ifstream f(logs[i]);
+        int count = 0;
+        if (f.is_open()) {
+            string l;
+            getline(f, l); // header
+            while (getline(f, l)) {
+                if (l != "") count++;
+            }
+            f.close();
+        }
+        out << titles[i] << count << "\n";
+    }
+
+    out.close();
+    cout << "Success: Enterprise system metrics exported to 'system_export_report.txt' safely." << endl;
 }
