@@ -40,7 +40,15 @@ void payFee(const string& rollNo, double amount) {
         string currentRollNo = getColumnValue(line, 1);
         if (currentRollNo == rollNo) {
             double total = atof(getColumnValue(line, 3).c_str());
-            double paid = atof(getColumnValue(line, 4).c_str()) + amount;
+           double paid = atof(getColumnValue(line, 4).c_str());
+
+paid += amount;
+
+if (paid > total)
+{
+    paid = total;
+}
+            cout << "\nPayment Successful!" << endl;
             string status = (paid >= total) ? "paid" : "partial";
             tempFile << getColumnValue(line, 0) << "," << currentRollNo << "," << getColumnValue(line, 2) << ","
                      << total << "," << paid << "," << getColumnValue(line, 5) << ","
