@@ -9,7 +9,6 @@
 #include "reports.h"
 
 using namespace std;
-
 void displayMainMenu();
 void studentMenu();
 void courseMenu();
