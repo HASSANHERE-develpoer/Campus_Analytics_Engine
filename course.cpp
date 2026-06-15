@@ -40,7 +40,22 @@ void addCourse() {
 
 // 2. Poora Course Catalog Display Karna (Student/Admin Function)
 void viewCourseCatalog() {
-    ifstream file("courses.txt");
+    ifstream check("courses.txt");
+
+string line;
+getline(check, line);
+
+while (getline(check, line))
+{
+    if (getColumnValue(line, 0) == courseCode)
+    {
+        cout << "\nCourse already exists!" << endl;
+        check.close();
+        return;
+    }
+}
+
+check.close();
     if (!file.is_open()) {
         cout << "Error: Could not open courses.txt!" << endl;
         return;
