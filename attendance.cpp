@@ -2,9 +2,8 @@
 #include <fstream>
 #include <string>
 #include "attendance.h"
-#include "student_ops.h"
+#include "student.h"    
 #include "filehandler.h"
-
 using namespace std;
 
 // Last marked session state logging track arrays (Backup Simulator for Undo) 
