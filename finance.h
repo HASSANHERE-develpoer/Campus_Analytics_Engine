@@ -1,6 +1,5 @@
-#ifndef FEE_TRACKER_H
-#define FEE_TRACKER_H
-
+#ifndef FINANCE_H
+#define FINANCE_H
 #include <string>
 using namespace std;
 
