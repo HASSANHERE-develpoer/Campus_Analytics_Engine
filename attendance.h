@@ -4,10 +4,17 @@
 #include <string>
 using namespace std;
 
-void markAttendance(const string& rollNo,
-                    const string& courseCode,
-                    const string& status);
+struct TempAttendance {
+    string roll;
+    string course;
+    string date;
+    string status;
+};
 
-void viewAttendanceReport(const string& rollNo);
+void markAttendance();
+double getAttendancePct(const string& rollNo, const string& courseCode);
+void getShortageList();
+bool undoLastSession();
+void printDailySheet();
 
 #endif
