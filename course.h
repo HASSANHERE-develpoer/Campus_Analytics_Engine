@@ -1,13 +1,23 @@
-#ifndef COURSE_H
-#define COURSE_H
+#ifndef COURSE_OPS_H
+#define COURSE_OPS_H
 
-#include <iostream>
 #include <string>
-
 using namespace std;
 
-// Module 3: Course & Enrollment Management Functions
-void addCourse();
-void viewCourseCatalog();
+enum EnrollResult {
+    SUCCESS,
+    STUDENT_INACTIVE,
+    COURSE_NOT_FOUND,
+    NO_SEATS,
+    ALREADY_ENROLLED,
+    CREDIT_LIMIT_EXCEEDED,
+    PREREQ_FAILED
+};
+
+void enrollStudent();
+void dropCourse();
+int getCreditLoad(const string& rollNo, const string& semester);
+bool checkPrerequisite(const string& rollNo, const string& courseCode);
+void listEnrolledStudents();
 
 #endif
