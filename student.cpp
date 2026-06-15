@@ -14,27 +14,34 @@ void addStudent() {
         return;
     }
 
-    string rollNo, name, dept, sem, cgpa, status;
+    string rollNo, name, dept, sem, status;
+double cgpa;
 
-    cout << "\n--- ADD NEW STUDENT ---" << endl;
-    cout << "Enter Roll No (e.g., AI-01): ";
-    cin >> rollNo;
-    cin.ignore(); // Buffer clear karne ke liye taake getline bypass na ho
-    
-    cout << "Enter Full Name: ";
-    getline(cin, name);
-    
-    cout << "Enter Department: ";
-    getline(cin, dept);
-    
-    cout << "Enter Semester: ";
-    cin >> sem;
-    
-    cout << "Enter Current CGPA: ";
-    cin >> cgpa;
-    
-    status = "active"; // Naya student hamesha active hoga
+cout << "\n--- ADD NEW STUDENT ---" << endl;
+cout << "Enter Roll No (e.g., AI-01): ";
+cin >> rollNo;
+cin.ignore();
 
+cout << "Enter Full Name: ";
+getline(cin, name);
+
+cout << "Enter Department: ";
+getline(cin, dept);
+
+cout << "Enter Semester: ";
+cin >> sem;
+
+cout << "Enter Current CGPA: ";
+cin >> cgpa;
+
+if (cgpa < 0.0 || cgpa > 4.0)
+{
+    cout << "\nInvalid CGPA! CGPA must be between 0 and 4." << endl;
+    file.close();
+    return;
+}
+
+status = "active";
     // Comma-separated standard format me save karo
     file << rollNo << "," << name << "," << dept << "," << sem << "," << cgpa << "," << status << "\n";
     file.close();
@@ -45,6 +52,21 @@ void addStudent() {
 // 2. Student Profile Display Karna (Student/Admin Function)
 void displayStudentProfile(const string& rollNo) {
     ifstream file("students.txt");
+
+string line;
+getline(check, line);
+
+while (getline(check, line))
+{
+    if (getColumnValue(line, 0) == rollNo)
+    {
+        cout << "\nStudent already exists!" << endl;
+        check.close();
+        return;
+    }
+}
+
+check.close();
     if (!file.is_open()) {
         cout << "Error: Could not open students.txt!" << endl;
         return;
