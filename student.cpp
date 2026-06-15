@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "student_ops.h"
+#include "student.h"
 #include "filehandler.h"
 
 using namespace std;
