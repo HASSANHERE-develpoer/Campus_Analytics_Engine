@@ -2,8 +2,10 @@
 #define FILEHANDLER_H
 
 #include <string>
+
 using namespace std;
 
-string getColumnValue(const string& line, int columnIndex);
+string getColumnValue(const string& row,
+                      int colIndex);
 
 #endif
