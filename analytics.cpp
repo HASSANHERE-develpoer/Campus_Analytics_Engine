@@ -2,10 +2,9 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include "reports.h"
-#include "student.h"
+#include "analytics.h"
+#include "student.h"    
 #include "filehandler.h"
-
 using namespace std;
 
 // 1. Department Summary Report: Average CGPA and Headcount
