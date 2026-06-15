@@ -3,7 +3,7 @@
 #include <string>
 #include <iomanip>
 #include "reports.h"
-#include "student_ops.h"
+#include "student.h"
 #include "filehandler.h"
 
 using namespace std;
