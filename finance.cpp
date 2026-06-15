@@ -3,10 +3,9 @@
 #include <string>
 #include <iomanip>
 #include <cstdlib>
-#include "fee_tracker.h"
-#include "student_ops.h"
+#include "finance.h"   
+#include "student.h"    
 #include "filehandler.h"
-
 using namespace std;
 
 // 1. Check if year is leap year (Manual logic)
