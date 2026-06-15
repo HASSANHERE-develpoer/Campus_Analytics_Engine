@@ -1,10 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "course_ops.h"
-#include "student_ops.h"
+#include "course.h"     
+#include "student.h"    
 #include "filehandler.h"
-
 using namespace std;
 
 // 1. Semester ke active credit hours calculate karna (Max 21 validation ke liye)
