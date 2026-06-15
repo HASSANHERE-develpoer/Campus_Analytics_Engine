@@ -1,13 +1,24 @@
-#ifndef STUDENT_H
-#define STUDENT_H
+#ifndef STUDENT_OPS_H
+#define STUDENT_OPS_H
 
-#include <iostream>
 #include <string>
-
 using namespace std;
 
-// Module 2: Student Record Management Functions
+struct Student {
+    string roll;
+    string name;
+    string dept;
+    string semester;
+    double cgpa;
+    string status; // active/inactive (soft delete)
+};
+
 void addStudent();
-void displayStudentProfile(const string& rollNo);
+bool searchByRoll(const string& rollNo, Student& student);
+void searchByName(const string& subStr);
+void updateStudent(const string& rollNo, int fieldOption, const string& newValue);
+void softDelete(const string& rollNo);
+void listActiveStudents();
+bool validateRollNumber(const string& rollNo);
 
 #endif
