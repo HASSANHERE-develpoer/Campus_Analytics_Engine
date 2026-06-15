@@ -13,6 +13,16 @@ void markAttendance(const string& rollNo, const string& courseCode, const string
     file.close();
     cout << "\nAttendance marked as [" << status << "] for " << rollNo << endl;
 }
+if (status != "P" &&
+    status != "A" &&
+    status != "L" &&
+    status != "p" &&
+    status != "a" &&
+    status != "l")
+{
+    cout << "Invalid attendance status!" << endl;
+    return;
+}
 
 void viewAttendanceReport(const string& rollNo) {
     ifstream file("attendance_log.txt");
