@@ -11,40 +11,31 @@ bool validateRollNumber(const string& rollNo) {
     if (rollNo.length() != 11) return false;
     if (rollNo.substr(0, 5) != "BSAI-") return false;
     if (rollNo[7] != '-') return false;
-    
-    // Check if YY and XXX are digits
-    for (int i = 5; i <= 6; i++) {
-        if (rollNo[i] < '0' || rollNo[i] > '9') return false;
-    }
-    for (int i = 8; i <= 10; i++) {
-        if (rollNo[i] < '0' || rollNo[i] > '9') return false;
-    }
+    for (int i = 5; i <= 6; i++) { if (rollNo[i] < '0' || rollNo[i] > '9') return false; }
+    for (int i = 8; i <= 10; i++) { if (rollNo[i] < '0' || rollNo[i] > '9') return false; }
     return true;
 }
 
 void addStudent() {
     string rollNo, name, dept, sem;
     double cgpa;
-
     cout << "\n--- Add New Student Record ---" << endl;
     cout << "Enter Roll No (BSAI-YY-XXX): ";
     cin >> rollNo;
     cin.ignore();
-
     if (!validateRollNumber(rollNo)) {
-        cout << "Error: Invalid Roll Number Format! (Must be BSAI-YY-XXX)" << endl;
+        cout << "Error: Invalid Roll Number Format!" << endl;
         return;
     }
 
-    // Duplicate Check
     ifstream checkFile("students.txt");
     if (checkFile.is_open()) {
         string line;
-        getline(checkFile, line); // Header skip
+        getline(checkFile, line);
         while (getline(checkFile, line)) {
             if (line == "") continue;
             if (getColumnValue(line, 0) == rollNo) {
-                cout << "Error: Student with this Roll Number already exists!" << endl;
+                cout << "Error: Roll Number already exists!" << endl;
                 checkFile.close();
                 return;
             }
@@ -52,44 +43,22 @@ void addStudent() {
         checkFile.close();
     }
 
-    cout << "Enter Full Name (No Digits): ";
-    getline(cin, name);
-    
-    // Name content check
-    for (size_t i = 0; i < name.length(); i++) {
-        if (name[i] >= '0' && name[i] <= '9') {
-            cout << "Error: Name cannot contain numeric digits!" << endl;
-            return;
-        }
-    }
-
-    cout << "Enter Department: ";
-    getline(cin, dept);
-    cout << "Enter Semester: ";
-    cin >> sem;
-    cout << "Enter CGPA (0.0 to 4.0): ";
-    cin >> cgpa;
-
-    if (cgpa < 0.0 || cgpa > 4.0) {
-        cout << "Error: Invalid CGPA bounds!" << endl;
-        return;
-    }
+    cout << "Enter Full Name: "; getline(cin, name);
+    cout << "Enter Department: "; getline(cin, dept);
+    cout << "Enter Semester: "; cin >> sem;
+    cout << "Enter CGPA: "; cin >> cgpa;
 
     ofstream file("students.txt", ios::app);
-    if (!file.is_open()) return;
-    
     file << rollNo << "," << name << "," << dept << "," << sem << "," << cgpa << ",active\n";
     file.close();
-    cout << "Student successfully appended to registry!" << endl;
+    cout << "Student successfully appended!" << endl;
 }
 
 bool searchByRoll(const string& rollNo, Student& student) {
     ifstream file("students.txt");
     if (!file.is_open()) return false;
-
     string line;
-    getline(file, line); // Skip Header
-
+    getline(file, line);
     while (getline(file, line)) {
         if (line == "") continue;
         if (getColumnValue(line, 0) == rollNo) {
@@ -110,155 +79,98 @@ bool searchByRoll(const string& rollNo, Student& student) {
 void searchByName(const string& subStr) {
     ifstream file("students.txt");
     if (!file.is_open()) return;
-
     string line;
-    getline(file, line); // Skip header
-    cout << "\nMatching Search Results:" << endl;
-    
-    // 1. User ki enter ki hui string ko lower case me convert karo
+    getline(file, line);
+
     string lowerSubStr = subStr;
-    for (size_t i = 0; i < lowerSubStr.length(); i++) {
-        if (lowerSubStr[i] >= 'A' && lowerSubStr[i] <= 'Z') {
-            lowerSubStr[i] = lowerSubStr[i] + 32; // ASCII shift to lowercase
-        }
-    }
-    
+    for(size_t i=0; i<lowerSubStr.length(); i++) lowerSubStr[i] = tolower(lowerSubStr[i]);
+
+    cout << "\nMatching Search Results:" << endl;
+    bool found = false;
     while (getline(file, line)) {
-        if (line == "") continue;
+        if (line.empty()) continue;
         string name = getColumnValue(line, 1);
-        
-        // 2. File se aaye naam ko temporary lower case me convert karo matching ke liye
         string lowerName = name;
-        for (size_t i = 0; i < lowerName.length(); i++) {
-            if (lowerName[i] >= 'A' && lowerName[i] <= 'Z') {
-                lowerName[i] = lowerName[i] + 32; // ASCII shift to lowercase
-            }
-        }
-        
-        // Manual substring find logic without <algorithm> (Case-Insensitive)
-        bool found = false;
-        if (lowerSubStr.length() <= lowerName.length()) {
-            for (size_t i = 0; i <= lowerName.length() - lowerSubStr.length(); i++) {
-                if (lowerName.substr(i, lowerSubStr.length()) == lowerSubStr) {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        
-        if (found) {
+        for(size_t i=0; i<lowerName.length(); i++) lowerName[i] = tolower(lowerName[i]);
+
+        if (lowerName.find(lowerSubStr) != string::npos) {
             cout << "Roll: " << getColumnValue(line, 0) << " | Name: " << name << " | Status: " << getColumnValue(line, 5) << endl;
+            found = true;
         }
     }
+    if(!found) cout << "No matches found." << endl;
     file.close();
 }
 
 void updateStudent(const string& rollNo, int fieldOption, const string& newValue) {
     ifstream file("students.txt");
     ofstream temp("temp_students.txt");
-    if (!file.is_open() || !temp.is_open()) return;
-
+    if (!file.is_open()) return;
     string line;
     getline(file, line);
-    temp << line << "\n"; // Header preserve
-
+    temp << line << "\n";
     bool updated = false;
     while (getline(file, line)) {
         if (line == "") continue;
         string fields[6];
         parseLineToFields(line, fields, 6);
-
         if (fields[0] == rollNo) {
-            // fieldOption maps: 1=Name, 2=Dept, 3=Semester, 4=CGPA
             if (fieldOption >= 1 && fieldOption <= 4) {
                 fields[fieldOption] = newValue;
                 updated = true;
             }
             temp << fields[0] << "," << fields[1] << "," << fields[2] << "," << fields[3] << "," << fields[4] << "," << fields[5] << "\n";
-        } else {
-            temp << line << "\n";
-        }
+        } else temp << line << "\n";
     }
-    file.close();
-    temp.close();
-    remove("students.txt");
-    rename("temp_students.txt", "students.txt");
-
-    if (updated) cout << "Record updated successfully!" << endl;
-    else cout << "Record not found or invalid field selection." << endl;
+    file.close(); temp.close();
+    remove("students.txt"); rename("temp_students.txt", "students.txt");
+    if (updated) cout << "Updated successfully!" << endl;
+    else cout << "Record not found." << endl;
 }
 
 void softDelete(const string& rollNo) {
     ifstream file("students.txt");
     ofstream temp("temp_students.txt");
-    if (!file.is_open() || !temp.is_open()) return;
-
     string line;
     getline(file, line);
     temp << line << "\n";
-
     while (getline(file, line)) {
         if (line == "") continue;
         string fields[6];
         parseLineToFields(line, fields, 6);
-
-        if (fields[0] == rollNo) {
-            fields[5] = "inactive"; // Soft delete toggled
-        }
+        if (fields[0] == rollNo) fields[5] = "inactive";
         temp << fields[0] << "," << fields[1] << "," << fields[2] << "," << fields[3] << "," << fields[4] << "," << fields[5] << "\n";
     }
-    file.close();
-    temp.close();
-    remove("students.txt");
-    rename("temp_students.txt", "students.txt");
-    cout << "Student account status switched to inactive." << endl;
+    file.close(); temp.close();
+    remove("students.txt"); rename("temp_students.txt", "students.txt");
+    cout << "Status changed to inactive." << endl;
 }
 
 void listActiveStudents() {
     Student activeList[200];
     int count = 0;
-
     ifstream file("students.txt");
     if (!file.is_open()) return;
-
     string line;
     getline(file, line);
-
     while (getline(file, line) && count < 200) {
-        if (line == "") continue;
+        if (line.empty()) continue;
         if (getColumnValue(line, 5) == "active") {
             activeList[count].roll = getColumnValue(line, 0);
             activeList[count].name = getColumnValue(line, 1);
             activeList[count].dept = getColumnValue(line, 2);
             activeList[count].semester = getColumnValue(line, 3);
             activeList[count].cgpa = stod(getColumnValue(line, 4));
-            activeList[count].status = "active";
             count++;
         }
     }
     file.close();
 
-    // Selection Sort by Roll Number manually
-    for (int i = 0; i < count - 1; i++) {
-        int minIdx = i;
-        for (int j = i + 1; j < count; j++) {
-            
-            // Fix: Safe logic comparison to avoid out-of-bounds or garbage evaluation
-            if (activeList[j].roll < activeList[minIdx].roll) {
-                minIdx = j;
-            }
-        }
-        if (minIdx != i) {
-            Student tempStud = activeList[i];
-            activeList[i] = activeList[minIdx];
-            activeList[minIdx] = tempStud;
-        }
-    }
-
     cout << "\n--- Active Students Registry ---" << endl;
     for (int i = 0; i < count; i++) {
-        
-        // Output formatting exactly matches sir's slide specifications
-        cout << activeList[i].roll << " | " << activeList[i].name << " | " << activeList[i].dept << " | Sem: " << activeList[i].semester << " | CGPA: " << activeList[i].cgpa << endl;
+        cout << activeList[i].roll << " | " << activeList[i].name
+             << " | Dept: " << activeList[i].dept
+             << " | Sem: " << activeList[i].semester
+             << " | CGPA: " << activeList[i].cgpa << endl;
     }
 }
