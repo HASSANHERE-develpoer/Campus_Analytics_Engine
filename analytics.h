@@ -1,11 +1,11 @@
-#ifndef ANALYTICS_H
-#define ANALYTICS_H
+#ifndef REPORTS.H
+#define REPORTS.H
 
 #include <string>
 using namespace std;
 
-double calculateCourseAverage(const string& courseCode);
-void findCourseTopper(const string& courseCode);
-void printPerformanceReport(const string& courseCode);
+void generateDepartmentSummary();
+void generateMeritList();
+void exportSystemStatus();
 
 #endif
