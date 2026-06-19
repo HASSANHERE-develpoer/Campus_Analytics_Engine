@@ -1,5 +1,5 @@
-#ifndef REPORTS.H
-#define REPORTS.H
+#ifndef ANALYTICS_H
+#define ANALYTICS_H
 
 #include <string>
 using namespace std;
