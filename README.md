@@ -34,10 +34,18 @@ The application dynamically targets and updates the following data states:
 
 ## 🛠️ Compilation and Execution Instructions
 
-### Prerequisites
-Ensure you have the GCC/MinGW compiler toolchain installed on your operating system environment.
+To run the Campus Analytics Engine on your local machine, follow these steps:
+1. Prerequisites
+Ensure you have the G++ compiler (part of MinGW or similar) installed on your system. You can verify this by running the following command in your terminal:
 
-### 1. Unified Compilation Command
-Execute the following unified command in your terminal/command prompt inside the repository folder to compile all modules securely:
-```bash
-g++ main
+g++ --version
+
+2. Compilation
+   
+Open your terminal in the project directory and run the following command to compile all source files:
+g++ *.cpp -o campus_engine.exe
+
+3. Execution
+   
+After successful compilation, run the generated executable using the command below:
+.\campus_engine.exe
