@@ -6,7 +6,7 @@
 #include "filehandler.h"
 using namespace std;
 
-// Last marked session state logging track arrays (Backup Simulator for Undo) 
+// Last marked session state logging track arrays 
 TempAttendance backupBuffer[100];
 int backupCount = 0;
 bool standardBackupAvailable = false;
@@ -15,18 +15,15 @@ bool standardBackupAvailable = false;
 void markAttendance() {
     string courseCode, sessionDate;
     cout << "\n--- Attendance Call Manager ---" << endl;
-    cout << "Enter Course Code: ";
-    cin >> courseCode;
-    cout << "Enter Session Date (DD-MM-YYYY): ";
-    cin >> sessionDate;
+    cout << "Enter Course Code: "; cin >> courseCode; clearInput();
+    cout << "Enter Session Date (DD-MM-YYYY): "; cin >> sessionDate; clearInput();
 
     ifstream file("enrollments.txt");
     if (!file.is_open()) return;
 
     string line;
-    getline(file, line); // Skip Header
+    getline(file, line); 
 
-    // Reset old state data tracking backup pointers 
     backupCount = 0; 
 
     while (getline(file, line)) {
@@ -37,16 +34,14 @@ void markAttendance() {
             if (searchByRoll(rollNo, stdObj) && stdObj.status == "active") {
                 string statusInput;
                 cout << "Roll: " << rollNo << " | Name: " << stdObj.name << " (P/A/L): ";
-                cin >> statusInput;
+                cin >> statusInput; clearInput();
 
-                // Validate input formats manually 
                 while (statusInput != "P" && statusInput != "A" && statusInput != "L" &&
                        statusInput != "p" && statusInput != "a" && statusInput != "l") {
                     cout << "Invalid status context! Re-enter (P/A/L): ";
-                    cin >> statusInput;
+                    cin >> statusInput; clearInput();
                 }
 
-                // Add to temporary local runtime structure array 
                 if (backupCount < 100) {
                     backupBuffer[backupCount].roll = rollNo;
                     backupBuffer[backupCount].course = courseCode;
@@ -64,7 +59,6 @@ void markAttendance() {
         return;
     }
 
-    // Flush runtime structures to storage logs [cite: 34, 67]
     ofstream logFile("attendance_log.txt", ios::app);
     if (!logFile.is_open()) return;
 
@@ -75,7 +69,7 @@ void markAttendance() {
                 << backupBuffer[i].status << "\n";
     }
     logFile.close();
-    standardBackupAvailable = true; // Flag snapshot stored securely 
+    standardBackupAvailable = true; 
     cout << "Success: Course attendance logged successfully. Snapshot cached." << endl;
 }
 
@@ -85,7 +79,7 @@ double getAttendancePct(const string& rollNo, const string& courseCode) {
     if (!file.is_open()) return 0.0;
 
     string line;
-    getline(file, line); // header
+    getline(file, line);
 
     int totalSessions = 0;
     double presentWeight = 0.0;
@@ -98,21 +92,20 @@ double getAttendancePct(const string& rollNo, const string& courseCode) {
             if (status == "P" || status == "p") {
                 presentWeight += 1.0;
             } else if (status == "L" || status == "l") {
-                presentWeight += 0.5; // 0.5 Late allocation formula 
+                presentWeight += 0.5; 
             }
         }
     }
     file.close();
 
-    if (totalSessions == 0) return 100.0; // Return full default status if no session data captured yet
+    if (totalSessions == 0) return 100.0;
     return (presentWeight / totalSessions) * 100.0;
 }
 
 // 3. Shortage Defaulters List (<75%) 
 void getShortageList() {
     string courseCode;
-    cout << "Enter Course Code to check shortages: ";
-    cin >> courseCode;
+    cout << "Enter Course Code to check shortages: "; cin >> courseCode; clearInput();
 
     ifstream file("enrollments.txt");
     if (!file.is_open()) return;
@@ -149,9 +142,8 @@ bool undoLastSession() {
 
     string line;
     getline(file, line);
-    temp << line << "\n"; // Preserve header row [cite: 57]
+    temp << line << "\n";
 
-    // Purani entries collect karte waqt un structural combinations ko drop karna jo snapshot matching me hain
     while (getline(file, line)) {
         if (line == "") continue;
         string fRoll = getColumnValue(line, 0);
@@ -175,7 +167,7 @@ bool undoLastSession() {
     remove("attendance_log.txt");
     rename("temp_attendance.txt", "attendance_log.txt");
 
-    standardBackupAvailable = false; // Reset status flag state
+    standardBackupAvailable = false;
     backupCount = 0;
     cout << "Success: Last interactive transaction rolled back across database logs." << endl;
     return true;
@@ -184,10 +176,8 @@ bool undoLastSession() {
 // 5. Print Daily Sheet Table Format 
 void printDailySheet() {
     string courseCode, targetDate;
-    cout << "Enter Course Code: ";
-    cin >> courseCode;
-    cout << "Enter Evaluation Date (DD-MM-YYYY): ";
-    cin >> targetDate;
+    cout << "Enter Course Code: "; cin >> courseCode; clearInput();
+    cout << "Enter Evaluation Date (DD-MM-YYYY): "; cin >> targetDate; clearInput();
 
     ifstream file("attendance_log.txt");
     if (!file.is_open()) return;

@@ -22,6 +22,7 @@ void addStudent() {
     cout << "\n--- Add New Student Record ---" << endl;
     cout << "Enter Roll No (BSAI-YY-XXX): ";
     cin >> rollNo;
+    clearInput(); // Crash-proof fix
     cin.ignore();
     if (!validateRollNumber(rollNo)) {
         cout << "Error: Invalid Roll Number Format!" << endl;
@@ -46,7 +47,9 @@ void addStudent() {
     cout << "Enter Full Name: "; getline(cin, name);
     cout << "Enter Department: "; getline(cin, dept);
     cout << "Enter Semester: "; cin >> sem;
+    clearInput(); // Crash-proof fix
     cout << "Enter CGPA: "; cin >> cgpa;
+    clearInput(); // Crash-proof fix
 
     ofstream file("students.txt", ios::app);
     file << rollNo << "," << name << "," << dept << "," << sem << "," << cgpa << ",active\n";

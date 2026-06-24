@@ -33,10 +33,10 @@ void recordPayment() {
     double paymentAmount;
 
     cout << "\n--- Financial Counter Transaction ---" << endl;
-    cout << "Enter Student Roll No: "; cin >> rollNo;
-    cout << "Enter Semester: "; cin >> semester;
-    cout << "Enter Amount Paid: Rs. "; cin >> paymentAmount;
-    cout << "Enter Payment Date (DD-MM-YYYY): "; cin >> paidDate;
+    cout << "Enter Student Roll No: "; cin >> rollNo; clearInput();
+    cout << "Enter Semester: "; cin >> semester; clearInput();
+    cout << "Enter Amount Paid: Rs. "; cin >> paymentAmount; clearInput();
+    cout << "Enter Payment Date (DD-MM-YYYY): "; cin >> paidDate; clearInput();
 
     ifstream file("fees.txt");
     ofstream temp("temp_fees.txt");
@@ -74,8 +74,8 @@ void recordPayment() {
 
 void generateReceipt() {
     string rollNo, semester;
-    cout << "Enter Student Roll No: "; cin >> rollNo;
-    cout << "Enter Target Semester: "; cin >> semester;
+    cout << "Enter Student Roll No: "; cin >> rollNo; clearInput();
+    cout << "Enter Target Semester: "; cin >> semester; clearInput();
 
     ifstream file("fees.txt");
     string line; getline(file, line); 

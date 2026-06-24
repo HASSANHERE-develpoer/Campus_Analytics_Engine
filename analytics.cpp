@@ -10,7 +10,10 @@ using namespace std;
 // 1. Department Summary Report: Average CGPA and Headcount
 void generateDepartmentSummary() {
     ifstream file("students.txt");
-    if (!file.is_open()) return;
+    if (!file.is_open()) {
+        cout << "Error: Registry file inaccessible." << endl;
+        return;
+    }
 
     string line;
     getline(file, line); // Header skip
@@ -25,9 +28,10 @@ void generateDepartmentSummary() {
         if (getColumnValue(line, 5) != "active") continue;
 
         string dName = getColumnValue(line, 2);
-        double cgpa = stod(getColumnValue(line, 4));
+        // Safely convert to double, if format is corrupted, it skips gracefully
+        double cgpa = 0.0;
+        try { cgpa = stod(getColumnValue(line, 4)); } catch(...) { continue; }
 
-        // Manual search if department already indexed
         int foundIdx = -1;
         for (int i = 0; i < distinctDepts; i++) {
             if (depts[i] == dName) {
@@ -63,7 +67,7 @@ void generateDepartmentSummary() {
     cout << "=====================================================" << endl;
 }
 
-// 2. Merit List Top Students (Sorted by CGPA using Bubble Sort)
+// 2. Merit List Top Students (Sorted by CGPA)
 void generateMeritList() {
     Student activeList[200];
     int count = 0;
@@ -81,7 +85,7 @@ void generateMeritList() {
             activeList[count].name = getColumnValue(line, 1);
             activeList[count].dept = getColumnValue(line, 2);
             activeList[count].semester = getColumnValue(line, 3);
-            activeList[count].cgpa = stod(getColumnValue(line, 4));
+            try { activeList[count].cgpa = stod(getColumnValue(line, 4)); } catch(...) { activeList[count].cgpa = 0.0; }
             count++;
         }
     }
@@ -92,7 +96,7 @@ void generateMeritList() {
         return;
     }
 
-    // Bubble Sort by CGPA Descending
+    // Bubble Sort
     for (int i = 0; i < count - 1; i++) {
         for (int j = 0; j < count - i - 1; j++) {
             if (activeList[j].cgpa < activeList[j + 1].cgpa) {
@@ -119,7 +123,7 @@ void generateMeritList() {
     cout << "====================================================================" << endl;
 }
 
-// 3. Export System Audit Metrics to external text file
+// 3. Export System Audit Metrics
 void exportSystemStatus() {
     ofstream out("system_export_report.txt");
     if (!out.is_open()) {
@@ -131,7 +135,6 @@ void exportSystemStatus() {
     out << "Generated Security Timestamp Checkpoint context\n";
     out << "-----------------------------------------------------\n";
 
-    // Count lines manually across registry assets
     string logs[] = {"students.txt", "courses.txt", "enrollments.txt", "attendance_log.txt", "fees.txt"};
     string titles[] = {"Total Registered Student Rows: ", "Total Loaded Course Assets: ", "Total Enrollment Mappings: ", "Total Attendance Logs Filed: ", "Total Financial Ledgers: "};
 
@@ -140,7 +143,7 @@ void exportSystemStatus() {
         int count = 0;
         if (f.is_open()) {
             string l;
-            getline(f, l); // header
+            getline(f, l); 
             while (getline(f, l)) {
                 if (l != "") count++;
             }

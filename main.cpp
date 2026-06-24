@@ -23,6 +23,7 @@ int main() {
         displayMainMenu();
         cout << "Enter Dashboard Selection Module: ";
         cin >> mainChoice;
+        clearInput(); // Crash-proof fix
 
         if (mainChoice == 7) {
             cout << "\nThank you for using Campus Analytics Engine. System shutting down cleanly." << endl;
@@ -67,8 +68,7 @@ void studentMenu() {
         cout << "5. Soft Delete Student Entry" << endl;
         cout << "6. Sort and Print Active Registry" << endl;
         cout << "7. Return to Main Dashboard Menu" << endl;
-        cout << "Selection: ";
-        cin >> choice;
+        cout << "Selection: "; cin >> choice; clearInput(); // Crash-proof fix
 
         if (choice == 7) break;
         string inputStr;
@@ -77,22 +77,20 @@ void studentMenu() {
         switch (choice) {
             case 1: addStudent(); break;
             case 2:
-                cout << "Enter Roll Number to fetch: ";
-                cin >> inputStr;
+                cout << "Enter Roll Number to fetch: "; cin >> inputStr;
                 if (searchByRoll(inputStr, s)) {
                     cout << "Found: " << s.name << " | Dept: " << s.dept << " | CGPA: " << s.cgpa << " | Status: " << s.status << endl;
                 } else cout << "No profile asset mapped to roll number." << endl;
                 break;
             case 3:
                 cout << "Enter name prefix/substring: ";
-                cin.ignore();
-                getline(cin, inputStr);
+                cin.ignore(); getline(cin, inputStr);
                 searchByName(inputStr);
                 break;
             case 4: {
                 int opt; string val;
                 cout << "Enter Roll Number: "; cin >> inputStr;
-                cout << "Select Field (1:Name, 2:Dept, 3:Semester, 4:CGPA): "; cin >> opt;
+                cout << "Select Field (1:Name, 2:Dept, 3:Semester, 4:CGPA): "; cin >> opt; clearInput();
                 cout << "Enter New Value string content: "; cin.ignore(); getline(cin, val);
                 updateStudent(inputStr, opt, val);
                 break;
@@ -115,7 +113,7 @@ void courseMenu() {
         cout << "2. Drop Course Allocation Instance" << endl;
         cout << "3. List Members Enrolled in Target Course Asset" << endl;
         cout << "4. Return to Main Dashboard Menu" << endl;
-        cout << "Selection: "; cin >> choice;
+        cout << "Selection: "; cin >> choice; clearInput(); // Crash-proof fix
 
         if (choice == 4) break;
         switch (choice) {
@@ -136,7 +134,7 @@ void attendanceMenu() {
         cout << "3. Fetch Shortage Defaulters List (< 75%)" << endl;
         cout << "4. Revert/Undo Last Session Operations Snapshot" << endl;
         cout << "5. Return to Main Dashboard Menu" << endl;
-        cout << "Selection: "; cin >> choice;
+        cout << "Selection: "; cin >> choice; clearInput(); // Crash-proof fix
 
         if (choice == 5) break;
         switch (choice) {
@@ -156,7 +154,7 @@ void gradeMenu() {
         cout << "1. Authorize Entry of Evaluated Student Marks" << endl;
         cout << "2. Compute Verified Class Analytical Statistics" << endl;
         cout << "3. Return to Main Dashboard Menu" << endl;
-        cout << "Selection: "; cin >> choice;
+        cout << "Selection: "; cin >> choice; clearInput(); // Crash-proof fix
 
         if (choice == 3) break;
         switch (choice) {
@@ -175,7 +173,7 @@ void feeMenu() {
         cout << "2. Print Official Formatted Fee Receipt Structure" << endl;
         cout << "3. Compile Delinquency Defaulters List Matrix" << endl;
         cout << "4. Return to Main Dashboard Menu" << endl;
-        cout << "Selection: "; cin >> choice;
+        cout << "Selection: "; cin >> choice; clearInput(); // Crash-proof fix
 
         if (choice == 4) break;
         switch (choice) {
@@ -195,7 +193,7 @@ void reportMenu() {
         cout << "2. Print Top 10 High Academic Merit Standings" << endl;
         cout << "3. Export Core System State Diagnostics Document" << endl;
         cout << "4. Return to Main Dashboard Menu" << endl;
-        cout << "Selection: "; cin >> choice;
+        cout << "Selection: "; cin >> choice; clearInput(); // Crash-proof fix
 
         if (choice == 4) break;
         switch (choice) {

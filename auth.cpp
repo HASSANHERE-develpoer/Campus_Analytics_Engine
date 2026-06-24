@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// 1. Quizzes me se worst 2 ko exclude karke baki 3 ka average nikalna (Strict Constraint: No Sort)
+// 1. Quizzes me se worst 2 ko exclude karke baki 3 ka average nikalna
 double bestThreeOfFive(double quizzes[], int n) {
     if (n < 3) {
         double sum = 0;
@@ -44,7 +44,7 @@ double bestThreeOfFive(double quizzes[], int n) {
     return (totalSum - lowest1 - lowest2) / 3.0;
 }
 
-// 2. Weighted Total calculations (Quiz: 10%, Assignment: 10%, Mid: 30%, Final: 50%)
+// 2. Weighted Total calculations
 double computeWeightedTotal(double quizAvg, double asgnAvg, double mid, double finalExam) {
     return (quizAvg * 0.10) + (asgnAvg * 0.10) + (mid * 0.30) + (finalExam * 0.50);
 }
@@ -75,35 +75,28 @@ double gradeToPoints(const string& grade) {
 void enterMarks() {
     string rollNo, courseCode, semester;
     cout << "\n--- Auth: Secure Grade Entry Assessment ---" << endl;
-    cout << "Enter Student Roll No: ";
-    cin >> rollNo;
-    cout << "Enter Course Code: ";
-    cin >> courseCode;
-    cout << "Enter Semester: ";
-    cin >> semester;
+    cout << "Enter Student Roll No: "; cin >> rollNo; clearInput();
+    cout << "Enter Course Code: "; cin >> courseCode; clearInput();
+    cout << "Enter Semester: "; cin >> semester; clearInput();
 
     double attPct = getAttendancePct(rollNo, courseCode);
     bool attendanceDefaulter = (attPct < 75.0);
 
     double quizzes[5] = {0};
     int qCount;
-    cout << "Enter number of quizzes taken (up to 5): ";
-    cin >> qCount;
+    cout << "Enter number of quizzes taken (up to 5): "; cin >> qCount; clearInput();
     if (qCount > 5) qCount = 5;
 
     for (int i = 0; i < qCount; i++) {
-        cout << "  Quiz " << i + 1 << " Marks (out of 100): ";
-        cin >> quizzes[i];
+        cout << "  Quiz " << i + 1 << " Marks (out of 100): "; 
+        cin >> quizzes[i]; clearInput();
     }
     double quizAvg = bestThreeOfFive(quizzes, qCount);
 
     double asgn, mid, finalExam;
-    cout << "Enter Assignments Average Marks (out of 100): ";
-    cin >> asgn;
-    cout << "Enter Mid Exam Marks (out of 100): ";
-    cin >> mid;
-    cout << "Enter Final Exam Marks (out of 100): ";
-    cin >> finalExam;
+    cout << "Enter Assignments Average Marks (out of 100): "; cin >> asgn; clearInput();
+    cout << "Enter Mid Exam Marks (out of 100): "; cin >> mid; clearInput();
+    cout << "Enter Final Exam Marks (out of 100): "; cin >> finalExam; clearInput();
 
     double weightedTotal = computeWeightedTotal(quizAvg, asgn, mid, finalExam);
     string finalGrade = getLetterGrade(weightedTotal);
@@ -128,7 +121,6 @@ double computeGPA(const string& rollNo, const string& semester) {
     if (!file.is_open()) return 0.0;
 
     string line;
-    // Keeping logic consistent
     getline(file, line); 
 
     double totalPoints = 0.0;
@@ -154,7 +146,6 @@ double computeGPA(const string& rollNo, const string& semester) {
                 }
                 cFile.close();
             }
-
             totalPoints += (gradeToPoints(grade) * crHrs);
             totalCredits += crHrs;
         }
@@ -165,13 +156,11 @@ double computeGPA(const string& rollNo, const string& semester) {
     return totalPoints / totalCredits;
 }
 
-// 7. Class Performance Evaluation Reports (Fixed Header Handling)
+// 7. Class Performance Evaluation Reports
 void computeClassStats() {
     string courseCode, semester;
-    cout << "Enter Course Code for Statistical Analytics: ";
-    cin >> courseCode;
-    cout << "Enter Semester: ";
-    cin >> semester;
+    cout << "Enter Course Code for Statistical Analytics: "; cin >> courseCode; clearInput();
+    cout << "Enter Semester: "; cin >> semester; clearInput();
 
     ifstream file("grades.txt");
     if (!file.is_open()) return;
@@ -180,7 +169,6 @@ void computeClassStats() {
     int count = 0;
     string line;
     
-    // Header skip line removed to read data from first row
     while (getline(file, line) && count < 200) {
         if (line == "") continue;
         if (getColumnValue(line, 1) == courseCode && getColumnValue(line, 2) == semester) {
