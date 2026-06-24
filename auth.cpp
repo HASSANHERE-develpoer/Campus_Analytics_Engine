@@ -19,7 +19,6 @@ double bestThreeOfFive(double quizzes[], int n) {
     double q1 = quizzes[0], q2 = quizzes[1], q3 = quizzes[2], q4 = quizzes[3], q5 = quizzes[4];
     double totalSum = q1 + q2 + q3 + q4 + q5;
     
-    // Find two lowest values manually
     double lowest1 = q1;
     int lowest1Idx = 0;
     
@@ -83,7 +82,6 @@ void enterMarks() {
     cout << "Enter Semester: ";
     cin >> semester;
 
-    // Attendance Verification Constraint (Eligibility Check)
     double attPct = getAttendancePct(rollNo, courseCode);
     bool attendanceDefaulter = (attPct < 75.0);
 
@@ -110,7 +108,6 @@ void enterMarks() {
     double weightedTotal = computeWeightedTotal(quizAvg, asgn, mid, finalExam);
     string finalGrade = getLetterGrade(weightedTotal);
 
-    // Dynamic Attendance Block: Override grade to F automatically
     if (attendanceDefaulter) {
         finalGrade = "F";
         cout << "\n⚠️ Auth Authorization Breach: Student attendance is " << attPct << "% (<75%). Access Restricted. Grade forced to F!" << endl;
@@ -131,7 +128,8 @@ double computeGPA(const string& rollNo, const string& semester) {
     if (!file.is_open()) return 0.0;
 
     string line;
-    getline(file, line); // header
+    // Keeping logic consistent
+    getline(file, line); 
 
     double totalPoints = 0.0;
     int totalCredits = 0;
@@ -167,7 +165,7 @@ double computeGPA(const string& rollNo, const string& semester) {
     return totalPoints / totalCredits;
 }
 
-// 7. Class Performance Evaluation Reports (Median & Mean)
+// 7. Class Performance Evaluation Reports (Fixed Header Handling)
 void computeClassStats() {
     string courseCode, semester;
     cout << "Enter Course Code for Statistical Analytics: ";
@@ -181,8 +179,8 @@ void computeClassStats() {
     double scoreArray[200];
     int count = 0;
     string line;
-    getline(file, line);
-
+    
+    // Header skip line removed to read data from first row
     while (getline(file, line) && count < 200) {
         if (line == "") continue;
         if (getColumnValue(line, 1) == courseCode && getColumnValue(line, 2) == semester) {
@@ -196,7 +194,6 @@ void computeClassStats() {
         return;
     }
 
-    // Pure Bubble Sort for Metrics calculations
     for (int i = 0; i < count - 1; i++) {
         for (int j = 0; j < count - i - 1; j++) {
             if (scoreArray[j] > scoreArray[j + 1]) {
