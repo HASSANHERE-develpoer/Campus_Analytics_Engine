@@ -1,10 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <iomanip>
-#include <cstdlib>
-#include <vector>
-#include <sstream>
 #include "finance.h"   
 #include "student.h"    
 #include "filehandler.h"
